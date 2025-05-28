@@ -1,0 +1,61 @@
+version: "3.8"
+
+services:
+    # MongoDB データベース
+    mongo:
+        image: mongo:6.0
+        container_name: daily-planner-mongo
+        restart: unless-stopped
+        ports:
+            - "27017:27017"
+        environment:
+            MONGO_INITDB_DATABASE: daily-planner
+        volumes:
+            - mongo_data:/data/db
+        networks:
+            - daily-planner-network
+
+    # バックエンドサーバー
+    server:
+        build:
+            context: ./server
+            dockerfile: Dockerfile
+        container_name: daily-planner-server
+        restart: unless-stopped
+        ports:
+            - "5000:5000"
+        environment:
+            - PORT=5000
+            - MONGODB_URI=mongodb://mongo:27017/daily-planner
+            - JWT_SECRET=your-secret-key-here-for-docker
+            - NODE_ENV=development
+        depends_on:
+            - mongo
+        volumes:
+            - ./server:/app
+            - /app/node_modules
+        networks:
+            - daily-planner-network
+
+    # フロントエンドクライアント
+    client:
+        build:
+            context: ./client
+            dockerfile: Dockerfile
+            args:
+                - REACT_APP_API_URL=http://localhost:5000/api
+        container_name: daily-planner-client
+        restart: unless-stopped
+        ports:
+            - "3000:80"
+        depends_on:
+            - server
+        networks:
+            - daily-planner-network
+
+volumes:
+    mongo_data:
+
+networks:
+    daily-planner-network:
+        driver: bridge

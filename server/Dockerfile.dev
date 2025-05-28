@@ -1,0 +1,20 @@
+# Node.js 18を使用
+FROM node:18-alpine
+
+# 作業ディレクトリを設定
+WORKDIR /app
+
+# package.jsonとpackage-lock.jsonをコピー
+COPY package*.json ./
+
+# 依存関係をインストール（開発依存関係も含む）
+RUN npm ci
+
+# アプリケーションのソースコードをコピー
+COPY . .
+
+# ポート5000を公開
+EXPOSE 5000
+
+# 開発モードでアプリケーションを起動（nodemonを使用）
+CMD ["npm", "run", "dev"]
