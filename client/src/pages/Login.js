@@ -23,7 +23,7 @@ const Login = () => {
     // エラーをクリア
     useEffect(() => {
         return () => clearError();
-    }, [clearError]);
+    }, []);
 
     const handleChange = (e) => {
         setCredentials({

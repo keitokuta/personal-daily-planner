@@ -39,7 +39,7 @@ const TaskForm = ({ onClose, task = null, defaultDate = "" }) => {
     // エラーをクリア
     useEffect(() => {
         return () => clearError();
-    }, [clearError]);
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
