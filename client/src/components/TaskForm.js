@@ -12,13 +12,21 @@ const TaskForm = ({ onClose, task = null, defaultDate = "" }) => {
 
     const { createTask, updateTask, isLoading, error, clearError } = useTask();
 
+    // ローカル時間で日付文字列を生成する関数
+    const formatDateForInput = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
+
     // 編集モードの場合、既存のタスクデータを設定
     useEffect(() => {
         if (task) {
             setFormData({
                 title: task.title || "",
                 description: task.description || "",
-                date: task.date ? new Date(task.date).toISOString().split("T")[0] : defaultDate,
+                date: task.date ? formatDateForInput(new Date(task.date)) : defaultDate,
             });
         } else if (defaultDate) {
             setFormData((prev) => ({
